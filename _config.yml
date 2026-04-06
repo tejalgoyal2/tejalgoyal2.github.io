@@ -1,0 +1,24 @@
+title: "Tejal's Blog"
+description: "Notes on building in public, macOS dev, and learning as I go."
+author:
+  name: tejalgoyal2
+
+baseurl: ""
+url: "https://tejalgoyal2.github.io"
+
+remote_theme: jekyll/minima
+
+minima:
+  skin: dark
+  social_links:
+    - { platform: github, user_url: "https://github.com/tejalgoyal2" }
+
+header_pages:
+  - about.md
+
+permalink: /posts/:year/:month/:day/:title/
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-remote-theme
