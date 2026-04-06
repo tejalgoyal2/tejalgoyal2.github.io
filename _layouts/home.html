@@ -7,12 +7,18 @@ layout: default
   <p>{{ site.description }}</p>
 </div>
 
-<div class="posts-label">Posts</div>
+<div class="posts-section-label">Posts</div>
 
 <ul class="post-list">
   {% for post in site.posts %}
+  {% assign words = post.content | number_of_words %}
+  {% assign minutes = words | divided_by: 200 %}
+  {% if minutes < 1 %}{% assign minutes = 1 %}{% endif %}
   <li class="post-item">
-    <div class="post-date">{{ post.date | date: "%b %d, %Y" }}</div>
+    <div class="post-meta">
+      <span class="post-date">{{ post.date | date: "%b %d, %Y" }}</span>
+      <span class="post-reading-time">{{ minutes }} min read</span>
+    </div>
     <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
     {% if post.excerpt %}
     <p class="post-excerpt">{{ post.excerpt | strip_html | truncatewords: 30 }}</p>

@@ -7,10 +7,7 @@ baseurl: ""
 url: "https://tejalgoyal2.github.io"
 
 permalink: /posts/:year/:month/:day/:title/
-
-plugins:
-  - jekyll-feed
-  - jekyll-seo-tag
+future: true
 
 defaults:
   - scope:
@@ -23,7 +20,12 @@ defaults:
     values:
       layout: "page"
 
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
 exclude:
   - Gemfile
   - Gemfile.lock
   - README.md
+  - _templates
