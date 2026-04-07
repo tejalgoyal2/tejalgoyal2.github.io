@@ -21,6 +21,7 @@ Posts about building in public: dev write-ups with code and context, notes on vi
 ## Elsewhere
 
 - [GitHub](https://github.com/tejalgoyal2)
+- [LinkedIn](https://linkedin.com/in/tejalgoyal)
 
 ---
 

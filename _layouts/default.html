@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% if page.title %}{{ page.title }} — {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
   <meta name="description" content="{{ page.excerpt | default: site.description | strip_html | truncatewords: 30 }}">
+  <link rel="icon" type="image/svg+xml" href="{{ '/favicon.svg' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
   {% feed_meta %}
   {% seo %}
@@ -18,6 +19,7 @@
         <a href="{{ '/' | relative_url }}">Posts</a>
         <a href="{{ '/about/' | relative_url }}">About</a>
         <a href="https://github.com/tejalgoyal2" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/tejalgoyal" target="_blank" rel="noopener">LinkedIn</a>
       </nav>
     </div>
   </header>
