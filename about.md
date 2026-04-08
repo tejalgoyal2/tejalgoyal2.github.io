@@ -16,11 +16,11 @@ Posts about building in public: dev write-ups with code and context, notes on vi
 
 ## Projects
 
-- **[AI Resume Pipeline](/posts/2026/04/02/ai-resume-system/)** — a system built with Claude Skills that generates tailored one-page resumes and cover letters from master experience data. Took five versions to get right. Then three more to optimize. ([How it works](/posts/2026/04/04/build-your-own-ai-resume-pipeline/))
+- **[AI Resume Pipeline](/posts/2026/04/03/ai-resume-system/)** — a system built with Claude Skills that generates tailored one-page resumes and cover letters from master experience data. Took five versions to get right. Then three more to optimize. ([How it works](/posts/2026/04/05/build-your-own-ai-resume-pipeline/))
 
-- **[IAM Threat Mapper](https://iam.tgoyal.me)** — an interactive attack path visualization and maturity assessment tool that maps identity-based attack chains to MITRE ATT&CK. Built with React and Cytoscape.js. ([Read the blog post](/posts/2026/04/07/iam-threat-mapper/))
+- **[IAM Threat Mapper](https://iam.tgoyal.me)** — an interactive attack path visualization and maturity assessment tool that maps identity-based attack chains to MITRE ATT&CK. Built with React and Cytoscape.js. ([Read the blog post](/posts/2026/04/14/iam-threat-mapper/))
 
-- **[OnTop](https://github.com/tejalgoyal2/OnTop)** — a macOS menu bar utility that pins windows above everything else. Built with Claude Code. Uses a wild workaround because Apple doesn't provide a real API for this. ([Read the blog post](/posts/2026/04/05/building-ontop/))
+- **[OnTop](https://github.com/tejalgoyal2/OnTop)** — a macOS menu bar utility that pins windows above everything else. Built with Claude Code. Uses a wild workaround because Apple doesn't provide a real API for this. ([Read the blog post](/posts/2026/04/07/building-ontop/))
 
 ## Elsewhere
 
