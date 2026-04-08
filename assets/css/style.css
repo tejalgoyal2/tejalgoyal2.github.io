@@ -490,3 +490,87 @@ pre code {
   .post-item:hover { background: none; }
   pre { padding: 1rem; }
 }
+
+/* ═══════════════════════════════════════════
+   Syntax Highlighting (Rouge / Pygments)
+   Dark theme matched to blog palette
+   ═══════════════════════════════════════════ */
+
+/* ── Comments ── */
+.highlight .c,
+.highlight .c1,
+.highlight .cm,
+.highlight .cs,
+.highlight .cp,
+.highlight .ch,
+.highlight .cpf   { color: #6a6a5a; font-style: italic; }
+
+/* ── Strings ── */
+.highlight .s,
+.highlight .s1,
+.highlight .s2,
+.highlight .sb,
+.highlight .sc,
+.highlight .sh,
+.highlight .sd,
+.highlight .se,
+.highlight .si,
+.highlight .sx,
+.highlight .sr,
+.highlight .ss,
+.highlight .dl   { color: #a8c97e; }
+
+/* ── Keywords ── */
+.highlight .k,
+.highlight .kc,
+.highlight .kd,
+.highlight .kn,
+.highlight .kp,
+.highlight .kr,
+.highlight .kt   { color: #d4915a; font-weight: 500; }
+
+/* ── Numbers ── */
+.highlight .m,
+.highlight .mb,
+.highlight .mf,
+.highlight .mh,
+.highlight .mi,
+.highlight .mo,
+.highlight .il   { color: #c9a0dc; }
+
+/* ── Functions / Names ── */
+.highlight .nf,
+.highlight .fm   { color: #7cb8e8; }
+.highlight .nc,
+.highlight .nn   { color: #e8a36e; }
+.highlight .na   { color: #7cb8e8; }
+
+/* ── Operators / Punctuation ── */
+.highlight .o,
+.highlight .ow   { color: #d4915a; }
+.highlight .p    { color: #cdc8c2; }
+
+/* ── Variables / Names ── */
+.highlight .n,
+.highlight .nb,
+.highlight .ni,
+.highlight .ne,
+.highlight .no,
+.highlight .nv,
+.highlight .bp,
+.highlight .vc,
+.highlight .vg,
+.highlight .vi   { color: #cdc8c2; }
+
+/* ── Other tokens ── */
+.highlight .nt   { color: #d4915a; }
+.highlight .nd   { color: #c9a0dc; }
+.highlight .err  { color: #f07178; }
+.highlight .gd   { color: #f07178; }
+.highlight .gi   { color: #a8c97e; }
+.highlight .w    { color: #cdc8c2; }
+
+/* ── Diff highlighting ── */
+.highlight .gd .x { background: rgba(240, 113, 120, 0.15); }
+.highlight .gi .x { background: rgba(168, 201, 126, 0.15); }
+
