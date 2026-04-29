@@ -62,7 +62,7 @@ I needed this to work across every future project without re-explaining my prefe
 
 I took the full design direction from my Perplexity and GPT sessions and brought it to Claude to build the actual skill. This is where the division of labor made sense — GPT was great for the exploratory "who am I as a designer" conversation, but Claude's skill system is what makes the decisions *stick*.
 
-The [skill](https://github.com/tejalgoyal2/tejalgoyal2.github.io) ended up as a three-file structure:
+The [skill](https://github.com/tejalgoyal2/chibi-design-system) ended up with a lean structure — one instruction file and three reference files:
 
 **`SKILL.md`** — the brain. Design philosophy, workflow rules, the quality test every project must pass before shipping. About 84 lines. Lean on purpose — if the instruction file is bloated, the model reads it slower and follows it worse. I learned *that* lesson the hard way with my [resume system](/posts/2026/04/03/ai-resume-system/).
 
@@ -86,7 +86,7 @@ The whole thing comes down to a few core principles:
 
 ## Default Claude vs. Chibi — same content, different universe
 
-To see the difference, I had Claude generate two versions of the same page — a personal project landing page with identical content. One using its default `frontend-design` aesthetic. One using Chibi.
+To see the difference, I had Claude generate two versions of the same page — a personal project landing page with identical content. One using its default `frontend-design` aesthetic. One using Chibi. [**See them side-by-side here.**](/assets/demos/compare.html)
 
 The default version came out with cold dark blues, a purple accent, floating gradient orbs in the background, and card hover effects that glowed. It looked fine. It looked like every other AI-generated portfolio page on the internet.
 
@@ -120,7 +120,7 @@ The other lesson: knowing what you *don't* want is almost as useful as knowing w
 
 I'm starting a software engineering co-op next week — which means the side project velocity is about to drop from "every few days" to "whenever I'm not already staring at code for eight hours." But the design system goes with me. Every personal project, every portfolio piece, every random weekend build — it all runs through Chibi now.
 
-The [skill is on GitHub](https://github.com/tejalgoyal2) if you want to see how it's structured. And if you want to build your own — you should. Not because my aesthetic is right for you (it almost certainly isn't), but because having *an* aesthetic that's consistently yours is the difference between a portfolio and a pile of projects.
+The [skill is on GitHub](https://github.com/tejalgoyal2/chibi-design-system) if you want to see how it's structured. And if you want to build your own — you should. Not because my aesthetic is right for you (it almost certainly isn't), but because having *an* aesthetic that's consistently yours is the difference between a portfolio and a pile of projects.
 
 > Chibi — Named after a soft toy sloth. Designed to look nothing like a soft toy.
 
