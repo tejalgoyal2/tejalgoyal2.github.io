@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chibi Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root, [data-theme="dark"] {
+    --color-bg:               #0f0e0d;
+    --color-surface:          #161514;
+    --color-surface-2:        #1c1b1a;
+    --color-surface-offset:   #222120;
+    --color-surface-dynamic:  #2a2927;
+    --color-divider:          #2e2d2b;
+    --color-border:           #363533;
+    --color-border-strong:    #4a4845;
+    --color-text:             #f0ede8;
+    --color-text-muted:       #8a8782;
+    --color-text-faint:       #4e4c49;
+    --color-text-inverse:     #0f0e0d;
+    --color-accent:           #e8dcc8;
+    --color-accent-hover:     #f0e8d5;
+    --color-accent-active:    #d4c8b0;
+    --color-accent-border:    #c8bca4;
+    --shadow-sm:  0 1px 2px rgba(15, 14, 13, 0.4);
+    --shadow-md:  0 4px 16px rgba(15, 14, 13, 0.5);
+    --shadow-lg:  0 16px 48px rgba(15, 14, 13, 0.6);
+    --shadow-glow: 0 0 0 1px var(--color-border-strong);
+    --font-display: 'Cormorant Garamond', 'Georgia', serif;
+    --font-body:    'Satoshi', 'Inter', sans-serif;
+    --text-xs:   clamp(0.75rem,  0.7rem  + 0.25vw, 0.875rem);
+    --text-sm:   clamp(0.875rem, 0.8rem  + 0.35vw, 1rem);
+    --text-base: clamp(1rem,     0.95rem + 0.25vw, 1.125rem);
+    --text-lg:   clamp(1.125rem, 1rem    + 0.75vw, 1.5rem);
+    --text-xl:   clamp(1.5rem,   1.2rem  + 1.25vw, 2.25rem);
+    --text-2xl:  clamp(2rem,     1.2rem  + 2.5vw,  3.5rem);
+    --text-3xl:  clamp(2.5rem,   1rem    + 4vw,    5rem);
+    --text-hero: clamp(3rem,     0.5rem  + 7vw,    8rem);
+    --radius-sm:   0.375rem;
+    --radius-md:   0.625rem;
+    --radius-lg:   1rem;
+    --radius-xl:   1.5rem;
+    --radius-full: 9999px;
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+    --space-20: 5rem;
+    --space-24: 6rem;
+  }
+
+  [data-theme="light"] {
+    --color-bg:               #f5f2ec;
+    --color-surface:          #faf8f4;
+    --color-surface-2:        #ffffff;
+    --color-surface-offset:   #ede9e2;
+    --color-surface-dynamic:  #e4dfd6;
+    --color-divider:          #d8d3ca;
+    --color-border:           #cdc8be;
+    --color-border-strong:    #b8b3a8;
+    --color-text:             #1a1917;
+    --color-text-muted:       #6b6863;
+    --color-text-faint:       #a8a49e;
+    --color-text-inverse:     #f5f2ec;
+    --color-accent:           #1a1917;
+    --color-accent-hover:     #2e2d2b;
+    --color-accent-active:    #0f0e0d;
+    --color-accent-border:    #1a1917;
+    --shadow-sm:  0 1px 2px rgba(26, 25, 23, 0.06);
+    --shadow-md:  0 4px 16px rgba(26, 25, 23, 0.08);
+    --shadow-lg:  0 16px 48px rgba(26, 25, 23, 0.12);
+    --shadow-glow: 0 0 0 1px var(--color-border-strong);
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: 1.6;
+    min-height: 100vh;
+    transition: background 320ms var(--ease-out-expo), color 320ms var(--ease-out-expo);
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 var(--space-6);
+  }
+
+  /* Theme toggle */
+  .theme-toggle {
+    position: fixed;
+    top: var(--space-6);
+    right: var(--space-6);
+    z-index: 100;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: border-color 180ms var(--ease-out-expo), box-shadow 180ms var(--ease-out-expo);
+    color: var(--color-text-muted);
+  }
+  .theme-toggle:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-glow);
+  }
+
+  /* Nav — minimal, left-aligned */
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-6) 0;
+  }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: var(--text-lg);
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+  }
+  .nav-links { display: flex; gap: var(--space-8); }
+  .nav-links a {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    transition: color 180ms var(--ease-out-expo);
+  }
+  .nav-links a:hover { color: var(--color-text); }
+
+  /* Hero — left-aligned, architectural type */
+  .hero {
+    padding: clamp(var(--space-16), 10vw, var(--space-24)) 0 var(--space-16);
+    max-width: 800px;
+  }
+  .hero-label {
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-faint);
+    margin-bottom: var(--space-6);
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: var(--text-hero);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    color: var(--color-text);
+    margin-bottom: var(--space-8);
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 400;
+  }
+  .hero p {
+    color: var(--color-text-muted);
+    font-size: var(--text-lg);
+    max-width: 560px;
+    line-height: 1.65;
+    margin-bottom: var(--space-10);
+  }
+  .hero-buttons { display: flex; gap: var(--space-4); flex-wrap: wrap; }
+
+  /* Chibi buttons — no bright colors, contrast + border signals */
+  .btn-primary {
+    background: var(--color-text);
+    color: var(--color-text-inverse);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    padding: var(--space-3) var(--space-6);
+    border-radius: var(--radius-full);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 180ms var(--ease-out-expo);
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:hover {
+    background: var(--color-accent-hover);
+    color: var(--color-text-inverse);
+    box-shadow: var(--shadow-md);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    padding: var(--space-3) var(--space-6);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    transition: all 180ms var(--ease-out-expo);
+  }
+  .btn-ghost:hover {
+    border-color: var(--color-border-strong);
+    background: var(--color-surface-offset);
+    box-shadow: var(--shadow-glow);
+  }
+
+  /* Section */
+  .section-label {
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-faint);
+    margin-bottom: var(--space-10);
+  }
+
+  .projects {
+    padding: var(--space-12) 0 clamp(var(--space-16), 8vw, var(--space-24));
+    border-top: 1px solid var(--color-divider);
+  }
+
+  /* Project cards — subtle, border-driven interactivity */
+  .project-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .project-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-8);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    gap: var(--space-6);
+    transition: box-shadow 180ms var(--ease-out-expo), border-color 180ms var(--ease-out-expo);
+    cursor: default;
+  }
+  .project-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-border-strong);
+  }
+  .card-content h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-xl);
+    line-height: 1.15;
+    margin-bottom: var(--space-2);
+    letter-spacing: -0.01em;
+  }
+  .card-content p {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    line-height: 1.65;
+    max-width: 520px;
+  }
+  .card-tags {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    margin-top: var(--space-4);
+  }
+  .tag {
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--color-text-faint);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .tag + .tag::before {
+    content: '·';
+    margin-right: var(--space-2);
+    color: var(--color-text-faint);
+  }
+  .card-number {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 300;
+    color: var(--color-text-faint);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--color-divider);
+    padding: var(--space-8) 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  footer p {
+    color: var(--color-text-faint);
+    font-size: var(--text-xs);
+    letter-spacing: 0.04em;
+  }
+
+  /* Entry animation — subtle, unhurried */
+  @keyframes chibi-enter {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .chibi-enter {
+    opacity: 0;
+    animation: chibi-enter 480ms var(--ease-out-expo) both;
+  }
+  .chibi-enter:nth-child(1) { animation-delay: 0ms; }
+  .chibi-enter:nth-child(2) { animation-delay: 80ms; }
+  .chibi-enter:nth-child(3) { animation-delay: 160ms; }
+  .chibi-enter:nth-child(4) { animation-delay: 240ms; }
+  .chibi-enter:nth-child(5) { animation-delay: 320ms; }
+
+  .label-badge {
+    position: fixed;
+    top: var(--space-6);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    z-index: 100;
+  }
+
+  @media (max-width: 640px) {
+    .project-card { grid-template-columns: 1fr; }
+    .card-number { display: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="label-badge">Chibi Design System</div>
+
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+    <span id="theme-icon">☀</span>
+  </button>
+
+  <div class="container">
+    <nav class="chibi-enter">
+      <div class="nav-logo">Tejal Goyal</div>
+      <div class="nav-links">
+        <a href="#">Work</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+      </div>
+    </nav>
+
+    <section class="hero chibi-enter">
+      <div class="hero-label">Engineer & Designer</div>
+      <h1>Building things<br>that feel <em>right</em></h1>
+      <p>Crafting thoughtful digital experiences at the intersection of AI tooling and personal expression.</p>
+      <div class="hero-buttons">
+        <button class="btn-primary">View Projects</button>
+        <button class="btn-ghost">Get in Touch</button>
+      </div>
+    </section>
+
+    <section class="projects">
+      <div class="section-label chibi-enter">Selected Work</div>
+
+      <div class="project-grid">
+        <div class="project-card chibi-enter">
+          <div class="card-content">
+            <h3>Sudoku</h3>
+            <p>A clean, minimal Sudoku game built as a single-page web app. Focused on feel — the grid should feel like a premium object, not a spreadsheet.</p>
+            <div class="card-tags">
+              <span class="tag">React</span>
+              <span class="tag">Game</span>
+              <span class="tag">Design System</span>
+            </div>
+          </div>
+          <div class="card-number">01</div>
+        </div>
+
+        <div class="project-card chibi-enter">
+          <div class="card-content">
+            <h3>Chibi Design System</h3>
+            <p>A personal design language: dark-warm cinematic minimalism. Built to make every project feel intentional and unmistakably mine.</p>
+            <div class="card-tags">
+              <span class="tag">Design</span>
+              <span class="tag">CSS</span>
+              <span class="tag">Typography</span>
+            </div>
+          </div>
+          <div class="card-number">02</div>
+        </div>
+
+        <div class="project-card chibi-enter">
+          <div class="card-content">
+            <h3>Portfolio v3</h3>
+            <p>This site. Third iteration, rebuilt from scratch with a focus on letting the work breathe. Less is more, but the less has to be good.</p>
+            <div class="card-tags">
+              <span class="tag">Next.js</span>
+              <span class="tag">Personal</span>
+              <span class="tag">Chibi</span>
+            </div>
+          </div>
+          <div class="card-number">03</div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>Tejal Goyal · 2026</p>
+      <p>Named after a soft toy sloth.</p>
+    </footer>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const icon = document.getElementById('theme-icon');
+      if (html.getAttribute('data-theme') === 'dark') {
+        html.setAttribute('data-theme', 'light');
+        icon.textContent = '☾';
+      } else {
+        html.setAttribute('data-theme', 'dark');
+        icon.textContent = '☀';
+      }
+    }
+  </script>
+</body>
+</html>

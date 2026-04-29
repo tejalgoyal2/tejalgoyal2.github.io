@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Default Claude Design</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface-2: #1a1a25;
+    --border: #2a2a3a;
+    --text: #f0f0f5;
+    --text-muted: #8888a0;
+    --accent: #7c5cfc;
+    --accent-hover: #9478ff;
+    --accent-glow: rgba(124, 92, 252, 0.25);
+    --font-body: 'Space Grotesk', sans-serif;
+    --font-display: 'DM Serif Display', serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Gradient orb background */
+  .bg-orbs {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .bg-orbs::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(124, 92, 252, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: float1 15s ease-in-out infinite;
+  }
+  .bg-orbs::after {
+    content: '';
+    position: absolute;
+    bottom: -10%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(200, 100, 255, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: float2 18s ease-in-out infinite;
+  }
+  @keyframes float1 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(60px, 40px); } }
+  @keyframes float2 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-40px, -30px); } }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* Nav */
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: -0.02em;
+  }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 120px 0 80px;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--accent-glow);
+    border: 1px solid rgba(124, 92, 252, 0.3);
+    color: var(--accent-hover);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 999px;
+    margin-bottom: 24px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1.1;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #f0f0f5 0%, #7c5cfc 50%, #c864ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p {
+    color: var(--text-muted);
+    font-size: 1.15rem;
+    max-width: 540px;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+  }
+  .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 14px 32px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s;
+    box-shadow: 0 4px 20px var(--accent-glow);
+  }
+  .btn-primary:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px var(--accent-glow);
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: 14px 32px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    background: rgba(124, 92, 252, 0.05);
+  }
+
+  /* Section heading */
+  .section-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .section-header h2 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    margin-bottom: 12px;
+  }
+  .section-header p {
+    color: var(--text-muted);
+    font-size: 1rem;
+  }
+
+  /* Project cards */
+  .projects {
+    padding: 60px 0 100px;
+  }
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+  }
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), #c864ff);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .project-card:hover {
+    border-color: rgba(124, 92, 252, 0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  }
+  .project-card:hover::before { opacity: 1; }
+
+  .card-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--accent-glow);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+  }
+  .project-card h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .project-card p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  .card-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    background: var(--surface-2);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+  }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  /* Animations */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 0.7s ease forwards;
+  }
+  .fade-up:nth-child(1) { animation-delay: 0s; }
+  .fade-up:nth-child(2) { animation-delay: 0.1s; }
+  .fade-up:nth-child(3) { animation-delay: 0.2s; }
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .label-badge {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 999px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    z-index: 100;
+  }
+</style>
+</head>
+<body>
+  <div class="bg-orbs"></div>
+  <div class="label-badge">Default Claude Frontend-Design Output</div>
+
+  <div class="container">
+    <nav>
+      <div class="nav-logo">TG.</div>
+      <div class="nav-links">
+        <a href="#">Work</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="hero-badge">Available for Projects</div>
+      <h1>Building Things<br>That Feel Right</h1>
+      <p>Engineer and designer crafting thoughtful digital experiences. Currently exploring the intersection of AI tooling and personal expression.</p>
+      <div class="hero-buttons">
+        <button class="btn-primary">View Projects</button>
+        <button class="btn-secondary">Get in Touch</button>
+      </div>
+    </section>
+
+    <section class="projects">
+      <div class="section-header">
+        <h2>Selected Work</h2>
+        <p>Recent projects and experiments</p>
+      </div>
+      <div class="project-grid">
+        <div class="project-card fade-up">
+          <div class="card-icon">🧩</div>
+          <h3>Sudoku</h3>
+          <p>A clean, minimal Sudoku game built as a single-page web app. Focused on feel — the grid should feel like a premium object, not a spreadsheet.</p>
+          <div class="card-tags">
+            <span class="tag">React</span>
+            <span class="tag">Game</span>
+            <span class="tag">Design System</span>
+          </div>
+        </div>
+        <div class="project-card fade-up">
+          <div class="card-icon">🎨</div>
+          <h3>Chibi Design System</h3>
+          <p>A personal design language: dark-warm cinematic minimalism. Built to make every project feel intentional and unmistakably mine.</p>
+          <div class="card-tags">
+            <span class="tag">Design</span>
+            <span class="tag">CSS</span>
+            <span class="tag">Typography</span>
+          </div>
+        </div>
+        <div class="project-card fade-up">
+          <div class="card-icon">📂</div>
+          <h3>Portfolio v3</h3>
+          <p>This site. Third iteration, rebuilt from scratch with a focus on letting the work breathe. Less is more, but the less has to be good.</p>
+          <div class="card-tags">
+            <span class="tag">Next.js</span>
+            <span class="tag">Personal</span>
+            <span class="tag">Chibi</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>Tejal Goyal · 2026</p>
+    </footer>
+  </div>
+</body>
+</html>
