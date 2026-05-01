@@ -1,6 +1,6 @@
 ---
 title: "Nib: A Menu Bar Scratchpad, an Apple Rant, and the State of AI and Swift"
-date: 2026-04-30
+date: 2026-05-01
 categories: [dev, macos, vibe-coding, project]
 ---
 
