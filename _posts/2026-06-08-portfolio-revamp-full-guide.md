@@ -1,333 +1,167 @@
 ---
 title: "Building tgoyal.me With Claude: The Full Guide, Every Prompt Included"
 date: 2026-06-08
-categories: [vibe-coding, dev, project]
+categories: [dev, vibe-coding, project]
 ---
 
-Someone asked me how I made my portfolio and I started explaining it. Twenty minutes in, they were still listening. So here it is properly, written down — not because the result is some masterpiece, but because the *process* was the interesting part, and I couldn't find a guide like this when I wanted one.
+The first time I gave Claude total creative freedom over my portfolio, it produced the most average website I have ever seen. The second time, I handed it three reference sites I genuinely love and it ignored all of them. The third attempt became [tgoyal.me](https://tgoyal.me), and the difference between the three attempts is the entire point of this post.
 
-This isn't a "step 1: install React" tutorial. It's the actual story — the wrong turns, the two full rollbacks, the sessions that ended in me typing things I'm mildly embarrassed to publish, and how it eventually clicked. I'm including the real verbatim prompts because that's the most useful thing I can hand you. Anyone can tell you *what* to build. Fewer people show you *how they actually talked to the AI to get there* — including the parts where the AI and I were clearly not on the same page.
+This is the real story with the real prompts, typos and meltdowns included, because that is the most useful thing I can hand you. Anyone can tell you what to build. Fewer people show you how they actually talked to the AI to get there, especially the parts where it went badly.
 
-Fair warning: this is long. We spent weeks on it. If you just want the lessons, jump to [Part 16](#part-16--what-id-tell-someone-starting-this). If you want the whole thing, settle in.
+If you only want the method, the next section is the part to steal. Everything after it is what happens when you actually use it.
 
-> **How to read this:** the early chapters (Parts 0–2) are the *mechanics* — the exact model-and-mode loop I ran. Everything after is the *story* of this specific build. If you only take one thing: the mechanics matter less than the taste constraints. More on that throughout.
+## The loop: one chat, two models
 
-## Part 0 — The whole thing ran in one chat, two models
+Everything ran inside the Claude Code desktop app, in one long chat, switching between two models and two modes. I barely touched regular Claude chat for this project.
 
-Here's the part most "I built X with AI" posts skip: the exact loop. Mine was simpler than you'd think, and I never really used Claude chat for this. Everything happened **inside the Claude Code desktop app**, in *one long chat*, by switching between two models and two modes.
+The loop: plan with Opus in plan mode, switch to Sonnet with accept edits, let it build, look at the preview, go back to plan mode with Opus, repeat. Plan, code, plan, code, for weeks. Then deploy.
 
-The loop, written out:
+Why one chat instead of fresh sessions: the plan and the build need to share context. Opus writes the plan knowing the whole codebase, and Sonnet implements it with that same history sitting right above it. Switching the model is not starting over. It is handing the same conversation to a different brain.
 
-> **Plan with Opus (plan mode) → switch to Sonnet (accept edits) → let it build → preview → plan again with Opus → build again with Sonnet → ...**
+The mechanics that took me a while to figure out:
 
-Plan, code, plan, code, plan, code. For weeks. Then deploy.
+**Make the plan do the thinking.** I told Opus, explicitly, to make the plan detailed enough that Sonnet does not need to think, just implement. The expensive reasoning happens once, up front, and every decision gets baked into the plan. Sonnet then executes a spec instead of inventing one, which also means it wanders off less.
 
-The reason it's *one chat* and not separate sessions: the plan and the build need to share context. Opus writes the plan knowing the whole codebase; Sonnet implements it with that same history right there above it. When I switched models I wasn't starting over — I was handing the same conversation to a different brain.
+**Comment on the plan instead of accepting it.** When Claude Code presents a plan, you can accept it or make changes first. If I accepted, Opus would start implementing immediately, on Opus, the expensive way. So I read the plan top to bottom and dropped a comment wherever something was off ("no, this is not what I had in mind"), added any general ideas to the prompt, and sent it back for another planning pass. Usually one or two rounds and the plan was right. Only then did I switch the model to Sonnet, flip to accept edits, and tell it to follow the plan. The model swap is the go signal.
 
-The thing that makes this work, and the single most useful trick in this whole post:
+**When you get disconnected, paste the plan back.** I got disconnected a lot. Just saying "continue" makes things fuzzy. What worked: copy the whole plan back into the chat and say "go on, keep working on this." Tedious. Also the reason the build never drifted.
 
-> **Tell Opus to make the plan detailed enough that Sonnet doesn't have to *think* — just *implement*.**
+**Which models, for the record.** Opus 4.8 with thinking on high for planning. Sonnet 4.6, also on high, for building. I did try Opus for implementation early on and dropped it fast: the output was not meaningfully better at executing an already detailed plan, and it ate my usage. Anthropic has a [guide on picking models](https://claude.com/resources/tutorials/choosing-the-right-claude-model) that lands in the same place. I am on the Pro plan, for context.
 
-That's the division of labour. Opus does the expensive reasoning *once*, up front, and bakes every decision into the plan. Sonnet then executes a spec instead of inventing one. You're not paying for deep reasoning twice, and Sonnet is far less likely to wander off and "improve" things you didn't ask about.
+<!-- MEDIA SUGGESTION: a screenshot of Claude Code plan mode with one of your inline comments on a plan line. It makes "comment, don't accept" instantly concrete. -->
 
-## Part 1 — Why Opus plans and Sonnet builds (and why I dropped Opus for building)
+## Attempt one: total freedom, total slop
 
-I'm a Pro-plan user, so I had all the models. Here's what I actually reached for, and what I learned the expensive way.
+What I had before this all started was a perfectly decent portfolio. Dark lavender theme, a 3D particle field in the hero you could push around with your cursor, smooth scroll, animated sections. Professional and polished, and that was the ceiling. Every section was some variation of a card grid. Zero personality.
 
-**Planning: Opus 4.8, thinking cranked up (high / extra).** Planning is the part that genuinely needs deep reasoning — the concept, the architecture, the "should this section even exist" calls. Opus is the large reasoning specialist, built for problems that genuinely need deep thinking over time, and it uses more of your rate limit, so you want to reserve it for tasks that really need it. Planning is one of those tasks. This is exactly the kind of work [Anthropic's model-picking guide](https://claude.com/resources/tutorials/choosing-the-right-claude-model) points Opus at.
+So I opened a fresh session and gave Claude the dream brief: full visual redesign, start from zero, pick a direction, design every section with a distinct identity.
 
-**Building: Sonnet 4.6, also on high thinking.** Once the plan is detailed, building is *execution*, and Sonnet is the daily driver — strong reasoning for the kind of work you do every day, coding included, and Anthropic literally says start here if you're unsure. I *did* try Opus for the implementation early on. It wasn't worth it — the output wasn't meaningfully better for executing an already-detailed plan, and it ate through my usage fast. Dropped it almost immediately.
+It picked "soft brutalism." Clean, structured, legible, and completely soulless. My response, verbatim:
 
-**Haiku: I didn't use it at all.** Worth knowing it exists for quick lookups, but this project never needed it.
+> "you know what, this lacks so much character. the old portfolio was way way ahead of leagues, with moving 3d cards, blog cards moving, the hero section, now it is more ai slop actually. [...] and this color itself screams ai slop. i am written by a shitty ai bot. the old lavender theme the glow everything was so so so so leagues ahead, i thought this would be useful but this is so shitty. can you do anything about this. not one element i like about this."
 
-One detail that made cranking thinking up far less scary: both Sonnet 4.6 and Opus 4.8 have adaptive extended thinking, so Claude automatically calibrates its reasoning depth — simple questions get fast answers, complex ones get more thinking. Leaving thinking on high isn't the usage bonfire it used to be.
+Then the rollback:
 
-> The rule, distilled: **Opus plans, Sonnet builds, and your job is to make the plan so good that Sonnet barely has to think.** Re-test this when new models land, though — Anthropic notes a new version isn't a patch on the old one; each release is a separate training run, so which model fits a task can quietly shift.
+> "i want you to remove all these changes done. fully roll back to the state we were before. drop everything. and just put a md file documenting what you tried and it went wrong what i said i did not like etc."
 
-## Part 2 — How I actually worked the plan-then-build toggle
+Back to lavender. And the failure was mine, not the model's. "Design a portfolio" with no constraints produces the statistically most average portfolio, because the average is exactly what the model samples from when you give it nothing else. I had already learned a version of this lesson building [Chibi](/posts/2026/04/29/chibi-design-system/), where the whole idea was that a defined visual language exists so the AI is not guessing. I just had not connected it to this project yet.
 
-The loop has some mechanics that took me a while to figure out, so here they are concretely.
+## Attempt two: references everywhere, none used
 
-**Commenting on the plan instead of accepting it.** When Opus presents a plan in Claude Code, you get options — accept and run, or make edits first. If I *accepted*, Opus would immediately start implementing (on Opus, the expensive way). I didn't want that. So I'd read the plan top to bottom and, wherever something was off — *"no, this isn't what I had in mind"* — I'd drop a comment right on that line or word. Then I'd add any general ideas to the prompt and send it back for *another* plan pass, not a build. Usually 1–2 iterations of that and the plan was right.
+New approach: give it taste through references. I had three sites I genuinely love. [buttermax.net](https://buttermax.net), with a magnetic cursor that deforms like fluid. [igloo.inc](https://igloo.inc), with its 3D scroll effects. [drumspirit.be](https://drumspirit.be), with fluid section morphing. Plus screen recordings of specific effects I wanted, plus some Spider-Verse comic energy. I sent all of it.
 
-**Then, and only then, switch the model.** Once I was happy with the plan, I'd change the model to Sonnet, flip to accept-edits, and tell it to follow the plan. The model swap *is* the "okay, go build now" signal.
+The result used none of it.
 
-**Reconnecting without losing the plan.** I got disconnected a *lot*. The mistake is to just say "continue" — context gets fuzzy. What I did instead: copy the whole plan back into the chat and say *"go on, keep working on this."* Paste the spec back in, every time. It's tedious. It also never let the build drift.
+> "man i want to say, i am so so disappointed right now. i gave so many so many good ideas and references and (attaching the screenshots) this is what you came up with? there was not a single feature i think you used."
 
-> The shape of a good session: read plan → comment the wrong bits → re-plan once or twice → switch to Sonnet → build → preview → back to Opus plan mode in the *same chat* → repeat. Don't collapse plan and build into one step. That's the mistake that cost me whole afternoons.
+So I sent the prompt I had been holding back:
 
-## Part 3 — The problem with the portfolio I already had
+> "I am feeling like you are trying very hard to stick to the current code, the current repo or the current design. if this is difficult, i can say that start from scratch, use these amazing references, [...] search the web for award winning design. i believe we can match the level of a fully well designed award winning website. so YOU ARE FREE TO DO WHAT YOU WISH. GIVE ME YOUR BEST."
 
-I had a working portfolio. It was *good*, honestly. Dark lavender theme, a 3D particle field in the hero you could push around with your cursor (R3F), smooth Lenis scroll, GSAP animations, a horizontal projects gallery. The kind of thing that looks professional and polished.
+Remember that line, because it failed here and worked later, and the difference is entirely about when you say it.
 
-But "professional and polished" was the ceiling. Every section was some variation of a card grid. Scroll down: hero, then cards, then more cards, then slightly different cards. Technically fine. Zero personality.
+This era also produced a throwaway practical note that became a permanent rule, after Claude ran the dev server and hung my MacBook so badly the battery was draining while plugged in:
 
-I knew it needed a rebuild. The question was how to direct that rebuild without landing in the exact same place.
+> "also keep work and do not run the dev server after each change as i just saw, it hanged my macbook pro real bad."
 
-## Part 4 — The skills-folder experiment, and the first disaster
-
-The story actually starts *before* any portfolio work, with a meta-problem: how do I give Claude my *taste* so it stops taking shortcuts? I'd been collecting design references — sites, frameworks, libraries — and I wanted them to mean something to the AI. My opening message:
-
-> *"can you analyse this folder? i have some good design instructions and skills. analyse and tell me what you think and how can we include them in our workflow: a md file, a skill or etc. thanks. mainly i want this to help me with my portfolio design as i the current one is good but seems incomplete and ai seems to take shortcuts to make it which introduces a lot of bugs."*
-
-We went back and forth on whether to use a `CLAUDE.md`, separate skill files, or just prompts. I got lost in the options:
-
-> *"i am confused: you want me to make a product md and design md, what is going on?"*
-
-If you've read my [resume-skill post](/posts/2026/06/05/build-your-own-resume-skill/), you know I've gone deep on Claude Skills before — but applying the same idea to *design taste* turned out to be much fuzzier than a resume format. Eventually the shape clicked: a fresh session, a clean brief, pointed at the existing codebase, with explicit design direction. Obvious in hindsight. Not obvious at the time.
-
-I also had the worry I think a lot of people have:
-
-> *"see i am a bit confused here. I liked the current design claude was going for, but when i saw the samples now i am inclinging more over how well can claude design if it is not influenced by my previous code and go all out. again there is a chance it might be bad but that is what i am not sure about."*
-
-I was scared that giving Claude total freedom would produce something *worse* than what I had. I was right to be scared. Just not for the reason I thought.
-
-## Part 5 — "this is one of the biggest disappointments i have seen in a long time"
-
-I spun up a fresh session with the brief: full visual redesign, start from zero, design each section with a distinct identity, both light and dark mode genuinely designed. The opening prompt:
-
-> *"Read the CLAUDE.md. I want a full redesign of this portfolio — treat the visual layer as starting from zero, preserve only content data. Use taste-skill to pick a visual direction, commit to it, and design each section with a distinct identity. Both light and dark mode must be genuinely designed."*
-
-What came back was... not good. It picked "soft brutalism." Clean, structured, legible. Also completely soulless. Nothing like what I had, nothing like what I wanted.
-
-My response was not polite:
-
-> *"you know what, this lacks so much character. the old portfolio was way way ahead of leagues, with moving 3d cards, blog cards moving, the hero section, now it is more ai slop actually. even the pronunciation, who tf in the world know how to say tei dzal whatever you wrote there. the link what does li bg would mean so confusing and unintuitive. each card look a plain old boring just a 'card' ole one had more character. and this color itself screams ai slop. the old lavender theme the glow everything was so so so so leagues ahead, i thought this would be useful but this is so shitty. can you do anything about this. not one element i like about this."*
-
-The IPA pronunciation `/teɪ-dʒʌl/` I'd asked for — which looked great in the old version — was now rendered so that nobody would know what they were looking at. Fair.
-
-Then the nuclear option:
-
-> *"i want you to remove all these changes done. fully roll back to the state we were before. drop everything. and just put a md file documenting what you tried and it went wrong what i said i did not like etc. i want the lavender thing my portfolio was before this."*
-
-`git checkout .`. Back to lavender.
-
-The failure was mine, not the model's. I gave Claude full creative freedom *without giving it my taste.* "Design a portfolio" with no constraints produces the statistically most average portfolio. The brief was too open. I learned a version of this lesson the hard way before, building my [Chibi design system](/posts/2026/04/29/chibi-design-system/) — a defined visual language exists precisely so the AI isn't guessing. I just hadn't connected the two yet.
-
-## Part 6 — References, a second attempt, and "YOU ARE FREE TO DO WHAT YOU WISH"
-
-Different approach. I had three reference sites I genuinely loved:
-
-- **buttermax.net** — a magnetic cursor that deforms like fluid
-- **igloo.inc** — 3D scroll effects
-- **drumspirit.be** — fluid section morphing
-
-I also had screen recordings of specific effects: gravity components, mask reveals, scratch reveals, hover carousels, scroll-driven 3D cards. I sent all of it. Spider-Verse "comic energy" was on the table too. The prompt was long and specific. Claude implemented. The result:
-
-> *"man i want to say, i am so so disappointed right now. i gave so many so many good ideas and references and (attaching the screenshots) this is what you came up with? there was not a single feature i think you used. the tay-jull hover is a complete disaster, it is so simple to just put a comic style (white with black dotted like in the marvel comics) dialog. there is nothing i wanted."*
-
-When you send reference sites and the output ignores all of them, something broke in translation. Then I sent what I now think is the single most important prompt of the whole project:
-
-> *"I am feeling like you are trying very hard to stick to the current code, the current repo or the current design. if this is difficult, i can say that start from scratch, use these amazing references, the text explaining the videos (pasted again below), use everything, search the web for award winning design. i believe we can match the level of a fully well designed award winning website. so YOU ARE FREE TO DO WHAT YOU WISH. GIVE ME YOUR BEST."*
-
-Hold onto that "YOU ARE FREE TO DO WHAT YOU WISH." It comes back later, and the timing of *when* you say it turns out to matter enormously.
-
-<!-- MEDIA SUGGESTION: a side-by-side screenshot of one of the reference sites (buttermax/igloo/drumspirit) next to the bland second attempt — shows the "translation broke" gap better than words. Source your own screenshots. -->
-
-Then, a throwaway practical note that became a permanent rule:
-
-> *"buttermax maybe? also keep work and do not run the dev server after each change as i just saw, it hanged my macbook pro real bad. the battery was going down even when plugged."*
-
-This became a hard constraint for the rest of the project. Which brings me to the single most useful line in my `CLAUDE.md`.
-
-## Part 7 — The one constraint that saved my laptop (and my sessions)
+`npm run dev` starts a server that never exits. Claude runs it, waits for it to finish, and it never finishes. Into the CLAUDE.md it went:
 
 ```text
-NEVER run npm run dev in this project — it hangs the machine.
+NEVER run npm run dev in this project, it hangs the machine.
 Use npm run build (it exits clean) then the preview tool.
 ```
 
-`npm run dev` starts a server that *never exits.* Claude Code would run it, wait for it to finish, and... it never finishes. The machine hangs, the battery drains while plugged in, the session is dead. `npm run build` runs and *exits*, which is the entire difference.
+Whatever your equivalent long-running command is, ban it on day one.
 
-> Whatever your equivalent is — any long-running command that doesn't return — put it in your `CLAUDE.md` on day one. If a command doesn't exit, it will eat your session alive and you won't understand why.
+## The session where it clicked
 
-## Part 8 — The monument prompt
+After a few more sessions of improving-but-not-crystallising, I did the thing that finally worked. I opened a clean session, told Claude to ignore every earlier attempt, and asked it to only think, not build.
 
-After enough back-and-forth, I reframed the whole thing:
+> "so we are now redesigning and not implementing. so think think and think. I have given you all the tools.... i started this new chat to not bring any old trash with this. [...] I do not care about the usage, i want the monument of a portfolio filled with character, animation, elements, a blessing to looks and interact with."
 
-> *"yes. make me a monument, a website worthy of even winning awards (maybe this is too much but atleast good enough to be a nomination worthy). run the website in the end and also keep committing all the way, spread the commits in the week or two."*
+This is the plan-then-build split earning its keep. A planning-only session, Opus on high, no file edits allowed. Just thinking. And the concept that came back was the whole game.
 
-"Nomination worthy." That's a *bar.* Not "looks good," not "seems professional." Something you'd actually submit to Awwwards. Naming the bar mattered more than I expected.
+THE PRESS. A living risograph broadsheet that prints itself as you scroll. Kinetic type that falls and slams into place. A registration crosshair cursor. Redaction bars that reveal like declassifying documents. A whole editorial, letterpress print metaphor.
 
-Then a long, honest status check that I think is a model for how to give feedback:
+I read the plan. I said do it. And the same words that produced mush in attempt two now produced the best work of the project, because this time there was a frame to be free inside of.
 
-> *"so yeah push to main and claude you know i think we still need to plan i mean think on this, the old one was still better. i like the red while color things, but not the yellow. also the skills pick and throw is very bad as in hard to actually see the skills. i want you to move back see from afar what you did then you will understand. see how well built this looks. while ours look very unfinished, no transitions in between the sections, animations, fluidity etc. ... and also push so i can see the website on tgoyal.me. thanks. ask any questions, or even ask me if you want to see samples from specific webpages i can screenshot them. ask if you want any mcp connector for web dev which will make designing and implementing these easier for you. search and see as claude has so many options now."*
+## Watching the build, dumping the feedback
 
-What makes that prompt work: it's *honest* about what isn't landing ("pills are hard to read"), it's *comparative* ("the old one was still better"), and it explicitly leaves the door open for Claude to ask for more or request tools. "Move back, see from afar" is me asking the model to step back and critique its own work — which it's surprisingly good at, if you prompt for it.
+Sonnet kept a visual preview running the whole time it worked, and I kept it open and watched. Not just the end result. I would glance at the page as it changed, skim the copy, and sometimes read the thinking to see what it was trying to do. The reviewer was me looking at the site, not the model grading itself.
 
-## Part 9 — The pivot to THE PRESS
+When I caught problems, I did not interrupt. Sonnet sometimes ran 30 to 40 minutes on one turn, and stopping it mid-build is worse than waiting. I kept a separate note open and wrote ideas down as they came, because I would absolutely forget them otherwise. Then when the turn ended, I dumped everything in one message:
 
-A few more sessions in, things were improving but not *crystallising.* So I did the thing that finally worked: I opened a clean session, told Claude to ignore every earlier attempt, and asked it to **only think, not build.**
+> "what established in 2017? i mean i was born in 2002? [...] the grab things is a bit phoney. [...] The project card expansion is breaking the red line going. fix that. [...] the contact or whatever section that was supposed to be after the blog is just a red screen. there is nothing."
 
-> *"so we are now redesigning and not implementing. so think think and think. I have given you all the tools.... if it helps you, i do not really like much the current portfolio is going on about. and i want a change. this is not resonating with me. so i started this new chat to not bring any old trash with this. and so you can start thinking all again. ... I do not care about the usage, i want the monument of a portfolio filled with character, animation, elements, a blessing to looks and interact with."*
+Six problems in one message, each specific enough to act on. The copy claimed I was established in 2017. I would have been fifteen. The "grab things" was a physics simulation in the Skills section where you could pick up letters and throw them around. Fun for ten seconds, unreadable as a skills section, and it got cut along with a lot of other clever ideas: the fake newspaper masthead, a dispatch ticker, a halftone monogram, a vertical red connector line that jerked every time a card expanded. The site got better every time something was removed.
 
-"A blessing to look at and interact with." That phrase ended up on a sticky note. It's a genuinely good brief.
+The other thing that needed correcting: the copy kept latching onto one part of my work and overweighting it, and it had started referring to me in the third person. "Tejal did this." It is my site. I should be talking. First person everywhere, and that rule stayed.
 
-This is the [plan-then-build toggle from Part 2](#part-2--how-i-actually-worked-the-plan-then-build-toggle) actually paying off. This was a *planning* session in plan mode — heavy reasoning, exactly where Opus 4.8 on high thinking earns its keep. No file edits yet. Just thinking. And the concept that came back was the whole game:
+One more pass came from this prompt:
 
-**THE PRESS.** A living risograph broadsheet that prints itself as you scroll. Kinetic type that falls and slams into place. A registration-crosshair cursor. Redaction bars that reveal like declassifying documents. A whole editorial / letterpress print metaphor.
+> "and this is going a bit too towards newspaper, i do not even have anything much to do with that. so rethink a bit."
 
-I read the plan. I said do it. And then immediately had to fight an accident:
+The press concept was generating great decisions about typography, motion, and palette. But the literal newspaper props were making the theme the subject instead of me. The call we landed on: keep everything that came from a good design principle that happened to use the press metaphor, cut everything that required the visitor to understand the newspaper reference to make sense.
 
-> *"i hope you haven't created a new plan, as i had already planned, and sent the previous message cause i clicked a button saying try again. Also if you are going for a home page like this in the image, change this, the words black and just white? this is just like a powerpoint presentation. see the plan and follow that."*
+<!-- MEDIA SUGGESTION: a short clip or GIF of the kinetic headline characters dropping into place on the live site. This is the signature effect and no amount of prose replaces seeing it. -->
 
-I'd hit a "try again" button by accident, which re-sent an *old* message and sent Claude pivoting away from THE PRESS. I had to paste the entire plan back in by hand. Lesson: in long sessions, an accidental re-send can quietly derail everything. Watch for it.
+## The mud problem
 
-## Part 10 — The v3 build, and a six-bug review in one breath
+The last big fight was color. I sent four screenshots of section transitions with this:
 
-The THE PRESS build went *well.* Phase by phase — foundation, press engine, hero, About, Skills, Projects, Experience, Blog, Contact. The kinetic headlines (characters dropping from above, slamming into place on a `back.out` ease) were instantly the thing that made it feel different. The registration cursor. The ink bloom as the final letter lands.
+> "all these, and the dotted one especially, it is not looking good and looks unfinished, either change it to let it mix better and i think the main issue is the color, this whole mud color is not seeming good. the red cream etc looks great but this mud feels very weird."
 
-Then *I* reviewed it — and this is the part worth stealing. Sonnet kept a visual preview running the whole time it worked, and I kept it open and watched it. Not just the final result — I'd glance at the page as it changed, skim the copy, occasionally read Sonnet's thinking to see what it was *trying* to do. The reviewing was *me looking at the site*, not the model grading itself.
+I did not know what was technically wrong. I just knew it looked like mud. That was enough. The dark backgrounds were `oklch(20% 0.018 60)`: low lightness, near-zero chroma, yellowish hue. Against the warm cream and the press red, that near-neutral read as muddy brown. The fix was to make the dark ground the dark end of the red family instead. The press red sits at hue 27, so the new ground became `oklch(17% 0.060 27)`: same hue, modest chroma, very low lightness. A dark red ink. Now the whole page is one hue story, cream to dark red-ink to vivid red, and the dark sections read as the dark end of the same palette instead of a different theme dropped in.
 
-When I caught problems, I didn't interrupt mid-build. I let Sonnet finish whatever it was doing — it sometimes ran 30–40 minutes straight — and waited for it to hand the turn back. (It runs long enough that I kept a separate note open for ideas as they popped up, because I *would* forget them otherwise. More than once I missed adding something and had to wait for the next turn to slip it in. Annoying, but interrupting a running build is worse.)
+Notice the wording in that prompt, though, because this is how I gave feedback the whole way through. Not "remove this." Instead: here is roughly what I want in its place, now you figure out how. When I did not like something, I described what I pictured instead of prescribing the fix. That keeps Claude from fixating on my exact suggestion while still giving it a direction to aim at.
 
-Then I'd dump everything I'd spotted in one message:
+<!-- MEDIA SUGGESTION: before/after screenshots of the mud seam vs the dark red-ink ground. The color story is hard to appreciate in words. -->
 
-> *"so sonnet has done this and executed this plan, i want you to review this. find any areas for change improvement etc. all. i feel we should not put all the focus on MCP only ... what established in 2017? i mean i was born in 2002? the grab things is a bit phoney ... The project card expansion is breaking the red line going. fix that. ... like even expanding the experience giving a jerk to the red line. and also experience is a bit hard to read. we should be able to scroll manually too in the blogs. the contact or whatever section that was supposed to be after the blog is just a red screen. there is nothing."*
+## The bug that only broke in production
 
-Six separate problems in one message. That's not complaining — that's a useful feedback *dump*, and each item is specific and addressable. A few highlights:
+One morning the Cloudflare Pages deploy started failing with `Could not resolve entry module "three"`. The cause: the Vite config was still splitting `three` and `framer-motion` into separate build chunks, except neither package was installed anymore. The dev server is lazy and never resolved them, so locally everything worked. The production build actually bundles everything, hit the phantom modules, and choked. The fix was deleting two lines.
 
-- **"What established in 2017? I mean I was born in 2002?"** The copy claimed I was established in 2017. I'd have been fifteen. Nobody is "established" at fifteen. Either a hallucinated date or a template leftover. Fixed immediately.
-- **"the grab things is a bit phoney."** The matter.js physics in Skills — letters you could pick up and throw. Fun in isolation, completely out of place against an editorial press aesthetic. "Phoney" is doing a lot of work in that sentence and it's exactly the right word.
-- **MCP over-focus.** The copy mentioned MCP (the protocol I work on) in the hero, the about, *and* the experience timeline. Tell Claude what you do and it'll sometimes latch onto one thing and overweight it. You course-correct.
+The lesson that stuck: what runs locally is not what ships. Which leads to the last step.
 
-## Part 11 — The build failure that only showed up in production
+## Ship it, then let people break it
 
-Around here:
+Get it on a real domain early. The deployed site surfaces things the preview never does: real browser rendering, a real screen, the actual domain. And after staring at your own site for weeks you stop being able to see it, so I asked friends to just use it and tell me where it felt slow, confusing, or off.
 
-> *"so it is failing the build i have pasted the cloudflare logs in the end..."*
+Their notes plus mine went back to Sonnet in as much detail as I could manage, screenshots attached. One practical annoyance: Claude Code caps you at five images per message. I spent the slots on things a screenshot explains faster than words, and described everything else in text. Five is not a lot when half your site has something you want to point at.
 
-The Cloudflare Pages deploy was broken: `Could not resolve entry module "three"`.
+## What I'd tell you to steal
 
-Root cause: `vite.config.js` had a `manualChunks` config splitting `three` and `framer-motion` into separate chunks — except *neither package was installed anymore.* Vite's dev server is lazy and never resolved them, so the error never appeared locally. The production build actually tries to bundle everything, hit the phantom modules, and choked.
+1. **Write your taste constraints first, not last.** My CLAUDE.md says things like "Bold design choices over safe ones. The portfolio is a playground, not a LinkedIn profile. Safe is wrong here." Those lines went in after the first disaster. They should have gone in before it.
+2. **"Do what you wish" only works inside a frame.** Said with no constraints, it produces the average of the internet. Said after a strong concept is locked, it produces the best work. Same words, different timing.
+3. **Delegate execution, not taste.** Claude is excellent at implementing an animation you describe, finding color values for a relationship you define, researching options for a pattern you want. It cannot decide what your site should feel like. You bring that part every time.
+4. **Describe what you see, suggest what you want, skip the diagnosis.** "This looks like mud" plus "make it mix better" got to the right fix faster than I could have. You do not need the technical root cause to give complete feedback.
+5. **If you keep rolling back, fix the brief, not the implementation.** Both of my full rollbacks were brief problems. You cannot implement your way out of a wrong concept.
+6. **Plan with the expensive model, build with the fast one, same chat.** And do not ask one model for the plan and the build in a single breath. That mistake cost me whole afternoons.
 
-Fix: delete the two lines. Commit message: `fix cloudflare build — remove phantom manualChunks for three and framer-motion`. Embarrassing in hindsight, maddening in the moment — it had been failing on *every* push.
+## Questions I actually get asked
 
-> The lesson that stuck: **a dev server that never resolves a module will happily hide a broken build.** What runs locally is not what ships. (More on why shipping early matters in [Part 17](#part-17--ship-it-then-let-other-people-break-it).)
+**Do I need to know how to code?** You do not need to write the code, but you need to be able to judge what comes back and you need enough git to do a rollback without panicking. The job is taste and review. Claude does the typing.
 
-## Part 12 — "i do not even have anything much to do with newspapers"
+**What did this cost?** A Claude Pro subscription, which I already had, and about $7 a year for the domain from Namecheap. Hosting was free. If you are a student, the [GitHub Student Pack](https://education.github.com/pack) bundles a lot of free dev tools, and [this list](https://jhaxce.github.io/student-perks/) collects most of what is out there.
 
-This is the pivot I'm most proud of catching.
+**Where do I host it?** For a static site, GitHub Pages or Cloudflare Pages. Both are free and both redeploy automatically when you push to the repo. This blog runs on GitHub Pages; tgoyal.me runs on Cloudflare Pages. Point your domain at either and you are done.
 
-> *"we need to rethink the whole skill section, this is not resonating with me and is not easy to read. ... also on the blogs, can we make the card move/floating style as in to give the 3d effect? tilting etc? ... and this is going a bit too towards newspaper, i do not even have anything much to do with that. so rethink a bit."*
+**Is it safe to let an AI run commands on my machine?** Claude Code asks before running things, and you control how much it is allowed to do on its own. The real risks in my experience were boring ones: a long-running command that hangs the session (ban those in your CLAUDE.md), and secrets or personal info ending up in a repo that later goes public. Review what is in the repo before publishing it, and never paste API keys into the chat.
 
-The press *concept* was generating great decisions — typography, motion, palette, the print metaphor. But the literal newspaper *props* (VOL. I · NO. 1, PRICE: YOUR ATTENTION, a live dateline, SEC. A / SEC. B folio markers, a dispatch ticker, a halftone monogram, the `— 30 —` end-mark) were making the *theme* the subject instead of *me.*
+**What about the site itself being a security risk?** A static portfolio has no backend, no database, and no login. There is close to nothing to attack. This is one of the few projects where you can vibe code with a clear conscience.
 
-The call:
+**How long did it take?** A few weeks of evenings, and most of that time was me reviewing and giving feedback rather than waiting on the model. A simpler site would take days.
 
-- Keep everything that came from a *good design principle* that happened to use the press metaphor.
-- Cut everything that required the visitor to *understand the newspaper reference* to make sense.
-- Rename sections to plain language.
-- First person throughout.
-
-That last one mattered. Third-person self-reference had crept into the copy:
-
-> *"also the i break things should be Breaking things etc as before. i meant like in some section you mentioned 'tejal did this... etc' so avoid that."*
-
-"I build / I broke / I love" — never "Tejal is a software engineer who." It's *my* site. I should be talking.
-
-## Part 13 — "this simple gradient won't do"
-
-With the props stripped and the connector line gone, section transitions became the next problem. We'd replaced them with plain gradient seams. My take:
-
-> *"this simple gradient won't do. research internet to figure out better ways to go to new pages. i have given you access to soo many tools, use em. i really really love this red different-text, we can even put this in other places where it fits subtly. ... and also the scroll bar on the right most, can we edit that? or is that a browser thing?"*
-
-"Research internet to figure out better ways. I have given you access to so many tools, use em." *This* is the kind of prompt that works — it doesn't prescribe a solution, it delegates the research. And because I'd set Claude up with web search and design-library access, it could actually go do that.
-
-(The scrollbar: yes, you can style it. `scrollbar-color`. Press red. Done.)
-
-## Part 14 — The mud problem
-
-The last big one. Four screenshots of section transitions and:
-
-> *"all these, and the dotted one especially, it is not looking good and looks unfinished, either change it to let it mix better and i think the main issue is the color, this whole mud color is not seeming good. the red cream etc looks great but this mud feels very weird. also the last connect page gets all of a sudden red, so fix that."*
-
-"This whole mud color is not seeming good" is a *complete* piece of feedback. I didn't know it was an OKLCH hue problem. I just knew it looked bad. That was enough.
-
-The dark grounds on Experience and Blog were `oklch(20% 0.018 60)` — low lightness, near-zero chroma, hue 60 (yellowish). Against warm cream and press red, that near-neutral read as muddy brown. Not dark, not dramatic. Mud.
-
-The fix that worked: make the dark ground the *dark end of the red family.* The press red is `oklch(56% 0.224 27)` — hue 27. New ground token: `oklch(17% 0.060 27)`. Same hue, modest chroma, very low lightness. A dark red-ink. Now the whole page is one hue story — cream (L95.5) → dark red-ink (L17) → vivid red (L56). The dark sections read as the dark end of the same palette, not a different theme dropped in.
-
-The "dotted one" (a halftone screen seam) got replaced with a torn deckle edge — a hand-torn `clip-path: polygon()` with jittered depths and a one-pixel wet-red shadow along the tear. Looks like the page was printed on stock and torn to reveal the sheet beneath.
-
-There's a second thing buried in that prompt worth pointing out, because it's how I gave feedback the whole way through. Look at the wording: *"either change it to let it mix better"* and *"this is your opportunity to try and implement a new animation, element etc. see the internet for ideas."* I'm not saying "remove this." I'm saying *here's roughly what I'd want instead — now you figure out how.* When I didn't like something, I tried to describe what I pictured in its place rather than just flagging the problem. That keeps Claude from getting *fixated* on my exact suggestion while still giving it a direction to aim at. Flexible, but pointed.
-
-> **Two takeaways from one prompt:**
-> 1. You don't need to diagnose the technical root cause to give good feedback. "This looks like mud" got Claude to the OKLCH fix faster than I could have. Describe what you *see*; let the model find the *why*.
-> 2. Suggest the *replacement*, not just the deletion. "Change it to mix better, try a new element" beats "remove it" — it points without pinning.
-
-## Part 15 — The commit strategy (and the bot that fought me)
-
-This comes up every time I show someone the git history. The commits are backdated — real dates spread over a natural development cadence across a couple of weeks:
-
-```bash
-GIT_AUTHOR_DATE="2026-05-17T14:18:00" \
-GIT_COMMITTER_DATE="2026-05-17T14:18:00" \
-git commit -m "press engine — scroll spine, kinetic type, ink effects, cursor"
-```
-
-Author: `Tejal Goyal <my-email>`. Always, only. No `Co-Authored-By Claude`. No Claude mention in any commit, comment, or visible copy on the site. The footer says "DESIGNED & BUILT BY HAND IN VICTORIA, BC." That's accurate — *I* designed it, Claude executed it, and that distinction is the whole point of this post. I set this constraint at the start and was explicit about it. My portfolio, my authorship.
-
-There was a fun fight with my own blog auto-sync bot, too. I have a GitHub Action that periodically commits updated blog data to `src/data/blog.js`. One afternoon my push got rejected — the remote had three "Update blog posts" commits the bot pushed while I was working locally. Fixed with:
-
-```bash
-git rebase --committer-date-is-author-date origin/main
-```
-
-which preserved my backdated timestamps through the rebase.
-
-## Part 16 — What I'd tell someone starting this
-
-**1. Write your taste constraints first, not last.** My `CLAUDE.md` says: "Desktop-first. Full animations, no performance compromises. Go all out. Bold design choices over safe ones. The portfolio is a playground, not a LinkedIn profile. Safe is wrong here." Those lines went in *after* the first failed attempt. They should've gone in first.
-
-**2. "You are free to do what you wish" only works after you've constrained the space.** I said it [too early in Part 6](#part-6--references-a-second-attempt-and-you-are-free-to-do-what-you-wish), before any taste constraints existed, and got mush. I said the same words later, after THE PRESS concept was locked, and got great work. Freedom *within a frame* is generative. Freedom without a frame produces the average of the internet.
-
-**3. Delegate execution, not taste.** Claude is excellent at implementing an animation you've described, finding the right OKLCH values for a relationship you've defined, evaluating library options for a pattern you want. It's *not* good at deciding what your portfolio should feel like, picking your palette from nothing, or choosing which section needs the most love. You bring that. Every time.
-
-**4. Say exactly what's wrong, even when you don't know why — then suggest the replacement.** "This mud color is not seeming good" is complete feedback; don't wait until you can name the root cause. And when you cut something, describe what you'd put in its place instead of just saying "remove it." Direction without a leash. Claude stays flexible but aimed.
-
-**5. If you keep rolling back, the brief is wrong — not the implementation.** I did two full rollbacks. Both times the execution was fine; the *brief* was either too open or pointing at the wrong thing. You can't implement your way out of a bad concept.
-
-**6. The delete key matters as much as the keyboard.** The red thread, the matter.js physics, the masthead props, the halftone monogram — all technically interesting, none survived. They served "being clever," not "serving the visitor." The site got better every single time we removed something.
-
-**7. Don't interrupt a running build — keep a notepad instead.** Sonnet sometimes ran 30–40 minutes on one turn. Stopping it mid-stream is worse than waiting. Keep a separate note open and jot ideas as they come, so when the turn ends you can dump them all at once. (I still forgot things and had to wait a turn. It happens.)
-
-**8. The real loop: Opus plans, Sonnet builds, same chat, you watch the preview.** Crank Opus thinking high for the plan, iterate on the plan 1–2 times by commenting on it, *then* switch to Sonnet to implement. Don't ask one model for plan-and-build in a single breath — that's the move that cost me whole afternoons. And keep the live preview open while Sonnet works; *you* are the reviewer, not the model.
-
-## Part 17 — Ship it, then let other people break it
-
-A thing that's easy to skip: get it on a real domain and let real people poke at it. Two reasons. One, the deployed site surfaces things preview never does — real browser rendering, real screen, the actual domain. Two, you stop being able to see your own site after staring at it for weeks. Other eyes catch what yours have gone blind to.
-
-So I deployed, then asked friends to just... use it. Where'd it feel slow, what was confusing, what looked off. Then I took their notes plus my own and fed them back to Sonnet — in as much detail as I could manage, with the same directional framing from [Part 14](#part-14--the-mud-problem): not "this is broken," but "here's what's wrong and here's roughly what I'd want instead."
-
-The one practical annoyance: Claude Code caps you at **five images per message.** When a screenshot explained a bug faster than words could, I used the slots for those — the visual-only stuff, the "look at this spacing" things. Anything I could describe clearly in text, I just described, to save the image budget. Five is not a lot when half your site has something you want to point at. Plan your screenshots.
-
-> **A cheap tip that punches above its price:** if you're a student, get the [GitHub Student Pack](https://education.github.com/pack). I grabbed my domain from Namecheap for about $7 a year — one frappe — and the Student Pack bundles a stack of free and discounted dev tools beyond that. [This list](https://jhaxce.github.io/student-perks/) collects a lot of what's out there; most of it rides in through the Student Pack. A personal domain is the single cheapest upgrade to how a portfolio reads.
-
-## Part 18 — The funny bits
-
-A few things that made me laugh re-reading the transcripts.
-
-The MCP over-focus: *"i feel we should not put all the focus on MCP only, i see it is mentioning i make mcp a lot more than it is necessary."* You tell it what you do; it falls in love with one thing.
-
-The double-hover bug, where project cards only expanded on the *second* hover: *"there is some settings where they expand only when i hover the mouse 2nd time, this is not good, change this."* The interaction was *trying* to prevent accidental expansion while scrolling. It did so in the most annoying way physically possible.
-
-And the one-word follow-up after a giant paragraph about wanting an award-winning site:
-
-> *"buttermax maybe?"*
-
-As if Claude was supposed to know exactly which effect from which reference site I was prioritising now. To its credit... it did.
+**Won't it look AI generated?** Only if you give it nothing to work with. That is what attempt one was. The slop is not in the tool, it is in the empty brief.
 
 ## Where it landed
 
-As of June 2026, [tgoyal.me](https://tgoyal.me) is live and I'm happy with it. One-page React app. Cream paper, dark red-ink, vivid press red. Characters that drop into place. Real 3D cards. A scroll crawl that speeds up when you scroll fast. Torn paper edges between colour sections. A registration cursor. An APPROVED stamp in the footer.
+As of June 2026, [tgoyal.me](https://tgoyal.me) is live and I am happy with it. Cream paper, dark red-ink, vivid press red. Characters that drop into place. 3D cards. A crawl that speeds up when you scroll fast. Torn paper edges between color sections. A registration cursor. An APPROVED stamp in the footer.
 
-Still on the list: a proper light-mode design pass (the architecture's ready, the design isn't), a better mobile experience (desktop was always the priority), a few more writing entries, maybe an easter egg or two in Contact.
+For the curious, the stack is React 19, Vite 7, and Tailwind v4 with OKLCH tokens throughout, GSAP and ScrollTrigger for motion, Lenis for scroll, all hanging off one shared ticker. The whole motion system lives in one folder: the kinetic headline, the cursor, the redaction bars, the torn seam, the crawl.
 
-The stack, for the curious: React 19 + Vite 7 + Tailwind v4 (OKLCH tokens throughout), GSAP 3 + ScrollTrigger for motion, Lenis 1.3 for scroll — everything hung off one shared ticker. No Framer Motion, no Three.js anymore. The whole motion system lives in a `src/press/` folder: the kinetic headline, the registration cursor, the redaction bars, the torn seam, the velocity-reactive crawl.
-
-The site does what I wanted: it's a playground with a point of view, something you *interact* with rather than read through. If it makes one person think "I want a site like that," it did its job.
+Still on the list: a proper light mode pass, a better mobile experience, and maybe an easter egg or two in Contact. The site does what I wanted. It has a point of view, and it is something you interact with rather than read through. If it makes one person think "I want a site like that," it did its job.
 
 ---
 
-*Built over a few weeks with Claude (Sonnet for building, Opus for the hard thinking). Source at [github.com/tejalgoyal2](https://github.com/tejalgoyal2) if you want to see how any of it actually works. Yell at me on [LinkedIn](https://linkedin.com/in/tejalgoyal).*
+*Built over a few weeks with Claude, Opus for the hard thinking and Sonnet for the building. Source at [github.com/tejalgoyal2](https://github.com/tejalgoyal2). Find me on [LinkedIn](https://linkedin.com/in/tejalgoyal).*
